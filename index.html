@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Финансы без тумана — диагностика</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+.app{max-width:520px;margin:auto;min-height:100vh;padding:18px 16px 30px}.brand{font-size:13px;font-weight:700;color:#6b7280;margin:4px 2px 18px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:22px;padding:22px;box-shadow:0 8px 30px rgba(20,30,50,.06)}
+h1{font-size:28px;line-height:1.08;margin:0 0 12px}h2{font-size:21px;margin:0 0 12px}p{font-size:16px;line-height:1.48;margin:0 0 16px}.muted,.small{color:#6b7280}
+.badge{display:inline-block;padding:7px 10px;border-radius:999px;background:#eaf2ff;color:#1f6feb;font-size:13px;font-weight:700;margin-bottom:14px}
+button{width:100%;border:0;border-radius:15px;padding:15px 16px;font-size:16px;font-weight:700;cursor:pointer}
+.primary{background:#1f6feb;color:#fff}.secondary{background:#eaf2ff;color:#1f6feb;margin-top:10px}
+.choice{background:#fff;border:2px solid #e5e7eb;color:#172033;text-align:left;margin-top:10px}
+.meta{display:flex;justify-content:space-between;color:#6b7280;font-size:13px;margin-bottom:9px}
+.progress{height:8px;background:#e9edf3;border-radius:99px;overflow:hidden;margin-bottom:18px}.progress>div{height:100%;background:#1f6feb;transition:width .2s}
+.question{font-size:21px;line-height:1.28;font-weight:700}.resultScore{font-size:56px;font-weight:800;line-height:1;margin:4px 0 8px}.resultTitle{font-size:20px;font-weight:800;margin-bottom:12px}
+.divider{height:1px;background:#e5e7eb;margin:20px 0}ul{padding-left:20px;margin:8px 0 18px}li{margin:8px 0;line-height:1.4}.small{font-size:13px;line-height:1.45}.hidden{display:none!important}
+</style>
+</head>
+<body><div class="app">
+<div class="brand">Финансы без тумана</div>
+
+<section id="start" class="card">
+<div class="badge">Диагностика</div>
+<h1>Насколько у вас работает финансовая дисциплина?</h1>
+<p>10 вопросов, чтобы быстро понять, насколько финансовые правила действительно встроены в управление компанией.</p>
+<p class="muted">Отвечайте так, как есть сейчас. Здесь нет правильных ответов — важен реальный результат.</p>
+<button class="primary" onclick="startTest()">Начать диагностику</button>
+</section>
+
+<section id="quiz" class="card hidden">
+<div class="meta"><span id="counter"></span><span id="scoreTop"></span></div>
+<div class="progress"><div id="bar"></div></div>
+<div id="question" class="question"></div>
+<button class="choice" onclick="answer(true)">Да</button>
+<button class="choice" onclick="answer(false)">Нет</button>
+</section>
+
+<section id="result" class="card hidden">
+<div class="badge">Ваш результат</div>
+<div id="score" class="resultScore"></div>
+<div id="resultTitle" class="resultTitle"></div>
+<p id="resultText"></p>
+<div class="divider"></div>
+<h2>На что обратить внимание</h2>
+<ul id="weakList"></ul>
+<p class="small">Диагностика — ориентир, а не аудит финансовой системы компании.</p>
+<button class="secondary" onclick="restart()">Пройти заново</button>
+</section>
+</div>
+
+<script>
+const questions=[
+"Есть ли в компании понятные правила согласования расходов?",
+"Есть ли лимиты на расходы сотрудников и подразделений?",
+"Понятно ли, кто отвечает за платежный календарь?",
+"Есть ли конкретный ответственный за дебиторскую задолженность?",
+"Есть ли правило для внеплановых расходов?",
+"Понятно ли, кто может принять решение о крупном расходе?",
+"Контролируете ли вы план и факт расходов регулярно?",
+"Понимают ли руководители свои финансовые зоны ответственности?",
+"Есть ли понятный порядок действий, если финансовое правило нарушено?",
+"Можете ли вы быстро понять, сколько денег компания может потратить без риска для обязательств?"
+];
+let i=0,score=0,answers=[];
+function startTest(){i=0;score=0;answers=[];start.classList.add("hidden");result.classList.add("hidden");quiz.classList.remove("hidden");render();}
+function render(){counter.textContent="Вопрос "+(i+1)+" из 10";scoreTop.textContent=score+" баллов";bar.style.width=((i+1)*10)+"%";question.textContent=questions[i];}
+function answer(v){answers.push(v);if(v)score++;i++;if(i<10)render();else showResult();}
+function showResult(){
+quiz.classList.add("hidden");result.classList.remove("hidden");document.getElementById("score").textContent=score+"/10";
+let title,text;
+if(score<=4){title="Финансовая дисциплина сильно зависит от ручного управления.";text="Многое, вероятно, держится на личном контроле собственника или отдельных сотрудников. При росте это может становиться источником финансовых рисков."}
+else if(score<=7){title="Система есть, но в ней есть слабые места.";text="Базовые финансовые правила уже работают, но отдельные зоны могут зависеть от людей и ручного контроля. Именно здесь обычно появляются сбои."}
+else{title="Финансовые правила встроены в управление.";text="Большинство ключевых правил и зон ответственности определены. Важно проверять, как они соблюдаются на практике."}
+resultTitle.textContent=title;resultText.textContent=text;weakList.innerHTML="";
+answers.forEach((ok,n)=>{if(!ok){let li=document.createElement("li");li.textContent=questions[n];weakList.appendChild(li)}})
+if(!weakList.children.length){let li=document.createElement("li");li.textContent="По всем десяти пунктам вы ответили «Да». Проверьте, что правила действительно соблюдаются на практике, а не только существуют на бумаге.";weakList.appendChild(li)}
+}
+function restart(){result.classList.add("hidden");startTest()}
+</script>
+</body></html>
